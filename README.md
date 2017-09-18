@@ -1,32 +1,5 @@
-# Through The Ages Counter
+# Dungeon GO! Order Deck
 
-> ボードゲーム「スルー・ジ・エイジズ」の得点記録表
+> 自作ボードゲーム「ダンジョンGO!」の順番決定デッキ
 
-[ここから起動](https://tamura2004.github.io/throughtheagescounter/#/)
-
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+[ここから起動](https://tamura2004.github.io/orderdeck/#/)
