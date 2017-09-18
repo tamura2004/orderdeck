@@ -7,10 +7,22 @@
     crossorigin="anonymous"
   )
 
-  carousel(
-    navigationClickTargetSize=48,
-    navigationEnabled=true
-  )
+  nav.navbar.navbar-expand-lg.navbar-light.bg-dark
+    a.text-light.navbar-brand(href="#") DungeonGO! 順番デッキ
+    ul.text-light.navbar-nav.mr-auto
+      li.nav-item
+        a.nav-link.text-light(href="#", @click="clear") リセット
+
+  .container(v-if="deck.length === 0")
+    h4 勇者を選択して下さい
+    form(@submit.prevent="init")
+      .form-check(v-for="hero in heroes")
+        label.form-check-label
+          input.form-check-input(type="checkbox",v-model="hero.selected")
+          | {{ hero.name }}
+      button.btn.btn-primary(type="submit") ゲーム開始
+
+  carousel(v-else)
     slide(v-for="card in deck",:style="{ backgroundColor: card.bgColor }")
       p {{ card.name }}
 
@@ -20,25 +32,6 @@
 
 import { Carousel, Slide } from 'vue-carousel'
 
-let HEROES = [
-  { name: '勇者ブルー', bgColor: '#69f', key: 'blue' },
-  { name: '勇者レッド', bgColor: '#f99', key: 'red' },
-  { name: '勇者グリーン', bgColor: '#9f9', key: 'green' },
-  { name: '勇者イエロー', bgColor: '#ff9', key: 'yellow' },
-  { name: '勇者ホワイト', bgColor: '#bbb', key: 'white' },
-  { name: '勇者ブラック', bgColor: '#222', key: 'black' }
-]
-
-let KING = [
-  { name: '王様', bgColor: '#c6f', key: 'king1' },
-  { name: '王様', bgColor: '#c6f', key: 'king2' }
-]
-
-let MONSTER = [
-  { name: 'モンスター', bgColor: '#000', key: 'monster1' },
-  { name: 'モンスター', bgColor: '#000', key: 'monster2' }
-]
-
 export default {
   name: 'app',
   components: {
@@ -46,26 +39,52 @@ export default {
     Slide
   },
   data () {
-    var cards = this._.concat(HEROES, KING, MONSTER)
-    var deck = []
-
-    for (var i = 1; i < 20; i++) {
-      deck.push({ name: '第' + i + 'ラウンド', bgColor: '#fff' })
-      deck = this._.concat(deck, this._.shuffle(cards))
-    }
-
     return {
-      count: 0,
-      deck: deck,
-      styleObject: {
-        backgroundColor: '#fff'
-      }
+      heroes: [
+        { name: '勇者ブルー', bgColor: '#69f', key: 'blue', selected: false },
+        { name: '勇者レッド', bgColor: '#f99', key: 'red', selected: false },
+        { name: '勇者グリーン', bgColor: '#9f9', key: 'green', selected: false },
+        { name: '勇者イエロー', bgColor: '#ff9', key: 'yellow', selected: false },
+        { name: '勇者ホワイト', bgColor: '#bbb', key: 'white', selected: false },
+        { name: '勇者ブラック', bgColor: '#222', key: 'black', selected: false }
+      ],
+      king: { name: '王様', bgColor: '#c6f', key: 'king' },
+      monster: { name: 'モンスター', bgColor: '#000', key: 'monster' },
+      deck: []
     }
   },
   methods: {
-    inc () {
-      this.count += 1
-      this.styleObject.backgroundColor = this.deck[this.count].bgColor
+    init () {
+      let card = []
+
+      for (let hero of this.heroes) {
+        if (hero.selected) {
+          card.push(hero)
+        }
+      }
+
+      let numOfHeroes = card.length
+
+      card.push(this.king)
+      card.push(this.monster)
+
+      if (numOfHeroes >= 4) {
+        card.push(this.king)
+        card.push(this.monster)
+      }
+
+      let deck = []
+
+      for (var i = 1; i < 40; i++) {
+        deck.push({ name: '第' + i + 'ラウンド', bgColor: '#fff' })
+        deck = deck.concat(this._.shuffle(card))
+      }
+      deck.push({ name: 'タイムオーバー', bgColor: '#000' })
+
+      this.deck = deck
+    },
+    clear () {
+      this.deck = []
     }
   }
 }
