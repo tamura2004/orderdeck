@@ -101,7 +101,7 @@ export default {
   -moz-osx-font-smoothing grayscale
 
 p
-  font-size 4rem
+  font-size 3rem
   margin-bottom 4px
   font-weight bold
   color white
@@ -137,6 +137,6 @@ p
   font-family Arial
   font-size 24px
   text-align center
-  min-height 600px
+  min-height 300px
 
 </style>
