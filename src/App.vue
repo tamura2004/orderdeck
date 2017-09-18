@@ -22,12 +22,14 @@
           | {{ hero.name }}
       button.btn.btn-primary(type="submit") ゲーム開始
 
-  carousel(
-    v-else,
-    :paginationEnabled="false"
-  )
-    slide(v-for="card in deck",:style="{ backgroundColor: card.bgColor }")
-      p {{ card.name }}
+  #container(v-else)
+    carousel(
+      :paginationEnabled="false",
+      :navigationEnabled="true",
+      :navigationClickTargetSize="24"
+    )
+      slide(v-for="card in deck",:style="{ backgroundColor: card.bgColor }")
+        p {{ card.name }}
 
 </template>
 
@@ -44,14 +46,14 @@ export default {
   data () {
     return {
       heroes: [
-        { name: '勇者ブルー', bgColor: '#69f', key: 'blue', selected: false },
-        { name: '勇者レッド', bgColor: '#f99', key: 'red', selected: false },
-        { name: '勇者グリーン', bgColor: '#9f9', key: 'green', selected: false },
-        { name: '勇者イエロー', bgColor: '#ff9', key: 'yellow', selected: false },
-        { name: '勇者ホワイト', bgColor: '#bbb', key: 'white', selected: false },
+        { name: '勇者ブルー', bgColor: '#0074bf', key: 'blue', selected: false },
+        { name: '勇者レッド', bgColor: '#c93a40', key: 'red', selected: false },
+        { name: '勇者グリーン', bgColor: '#56a764', key: 'green', selected: false },
+        { name: '勇者イエロー', bgColor: '#f2cf01', key: 'yellow', selected: false },
+        { name: '勇者ホワイト', bgColor: '#fff', key: 'white', selected: false },
         { name: '勇者ブラック', bgColor: '#222', key: 'black', selected: false }
       ],
-      king: { name: '王様', bgColor: '#c6f', key: 'king' },
+      king: { name: '王様', bgColor: '#9460a0', key: 'king' },
       monster: { name: 'モンスター', bgColor: '#000', key: 'monster' },
       deck: []
     }
@@ -79,7 +81,7 @@ export default {
       let deck = []
 
       for (var i = 1; i < 40; i++) {
-        deck.push({ name: '第' + i + 'ラウンド', bgColor: '#fff' })
+        deck.push({ name: '第' + i + 'ラウンド', bgColor: '#d16b16' })
         deck = deck.concat(this._.shuffle(card))
       }
       deck.push({ name: 'タイムオーバー', bgColor: '#000' })
@@ -94,6 +96,9 @@ export default {
 </script>
 
 <style lang="stylus">
+
+#container
+  padding 0 60px
 
 #app
   font-family "游ゴシック", YuGothic, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", sans-serif
