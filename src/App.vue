@@ -7,11 +7,11 @@
     crossorigin="anonymous"
   )
 
-  nav.navbar.navbar-expand-lg.navbar-light.bg-dark
-    a.text-light.navbar-brand(href="#") DungeonGO! 順番デッキ
-    ul.text-light.navbar-nav.mr-auto
+  nav.navbar.navbar-expand-lg.navbar-light.bg-light
+    a.text-dark.navbar-brand(href="#") DungeonGO! 順番デッキ
+    ul.text-dark.navbar-nav.mr-auto
       li.nav-item
-        a.nav-link.text-light(href="#", @click="clear") リセット
+        a.nav-link.text-dark(href="#", @click="clear") リセット
 
   .container(v-if="deck.length === 0")
     h4 勇者を選択して下さい
@@ -22,7 +22,10 @@
           | {{ hero.name }}
       button.btn.btn-primary(type="submit") ゲーム開始
 
-  carousel(v-else)
+  carousel(
+    v-else,
+    :paginationEnabled="false"
+  )
     slide(v-for="card in deck",:style="{ backgroundColor: card.bgColor }")
       p {{ card.name }}
 
@@ -127,12 +130,13 @@ p
   opacity 0
 
 .VueCarousel-slide
+  padding-top 2rem
   position relative
   background #42b983
   color #000
   font-family Arial
   font-size 24px
   text-align center
-  min-height 400px
+  min-height 600px
 
 </style>
