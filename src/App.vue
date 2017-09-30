@@ -1,57 +1,48 @@
 <template lang="pug">
-#app
-  link(
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css",
-    rel="stylesheet",
-    integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M",
-    crossorigin="anonymous"
-  )
+html
+  body
+    v-app(light)
+      v-toolbar(fixed)
+        v-toolbar-title DungeonGO! 順番デッキ
+        v-toolbar-items
+          v-btn(flat,@click="clear") リセット
+      main
+        v-container(v-if="deck.length === 0")
+          h6 勇者を選択して下さい
+          v-form
+            v-switch.py-1(
+              color="primary"
+              v-for="hero in heroes"
+              :label="hero.name"
+              v-model="hero.selected"
+            )
+            v-btn.primary(@click="init") ゲーム開始
 
-  nav.navbar.navbar-expand-lg.navbar-light.bg-light
-    a.text-dark.navbar-brand(href="#") DungeonGO! 順番デッキ
-    ul.text-dark.navbar-nav.mr-auto
-      li.nav-item
-        a.nav-link.text-dark(href="#", @click="clear") リセット
-
-  .container(v-if="deck.length === 0")
-    h4 勇者を選択して下さい
-    form(@submit.prevent="init")
-      .form-check(v-for="hero in heroes")
-        label.form-check-label
-          input.form-check-input(type="checkbox",v-model="hero.selected")
-          | {{ hero.name }}
-      button.btn.btn-primary(type="submit") ゲーム開始
-
-  #container(v-else)
-    carousel(
-      :paginationEnabled="false",
-      :navigationEnabled="true",
-      :navigationClickTargetSize="24"
-    )
-      slide(v-for="card in deck",:style="{ backgroundColor: card.bgColor }")
-        p {{ card.name }}
+        v-container(v-else)
+          carousel(
+            :paginationEnabled="false",
+            :navigationEnabled="true",
+            :navigationClickTargetSize="24"
+          )
+            slide(v-for="card in deck",:style="{ backgroundColor: card.bgColor }")
+              p {{ card.name }}
 
 </template>
 
 <script>
 
-import { Carousel, Slide } from 'vue-carousel'
+// import { Carousel, Slide } from 'vue-carousel'
 
 export default {
-  name: 'app',
-  components: {
-    Carousel,
-    Slide
-  },
   data () {
     return {
       heroes: [
-        { name: '勇者ブルー', bgColor: '#0074bf', key: 'blue', selected: false },
-        { name: '勇者レッド', bgColor: '#c93a40', key: 'red', selected: false },
-        { name: '勇者グリーン', bgColor: '#56a764', key: 'green', selected: false },
-        { name: '勇者イエロー', bgColor: '#f2cf01', key: 'yellow', selected: false },
-        { name: '勇者ホワイト', bgColor: '#fff', key: 'white', selected: false },
-        { name: '勇者ブラック', bgColor: '#222', key: 'black', selected: false }
+        { name: '勇者ブルー', bgColor: '#0074bf', key: 'blue', selected: true },
+        { name: '勇者レッド', bgColor: '#c93a40', key: 'red', selected: true },
+        { name: '勇者グリーン', bgColor: '#56a764', key: 'green', selected: true },
+        { name: '勇者イエロー', bgColor: '#f2cf01', key: 'yellow', selected: true },
+        { name: '勇者ホワイト', bgColor: '#fff', key: 'white', selected: true },
+        { name: '勇者ブラック', bgColor: '#222', key: 'black', selected: true }
       ],
       king: { name: '王様', bgColor: '#9460a0', key: 'king' },
       monster: { name: 'モンスター', bgColor: '#000', key: 'monster' },
