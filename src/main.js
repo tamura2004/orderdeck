@@ -4,27 +4,27 @@ import Vue from 'vue'
 import './stylus/main.styl'
 import App from './App'
 
-import VueFire from 'vuefire'
-Vue use(VueFire)
+// import VueFire from 'vuefire'
+// Vue.use(VueFire)
 
-import Firebase from 'forebase'
+// import Firebase from 'firebase'
 
-let config = {
-  apiKey: "AIzaSyArjuH0N-SAIwgd8DzZN7dvTxsrPIoiQVo",
-  authDomain: "myfirstfirebase-230fb.firebaseapp.com",
-  databaseURL: "https://myfirstfirebase-230fb.firebaseio.com",
-  projectId: "myfirstfirebase-230fb",
-  storageBucket: "myfirstfirebase-230fb.appspot.com",
-  messagingSenderId: "147999552069"
-}
+// let config = {
+//   apiKey: "AIzaSyArjuH0N-SAIwgd8DzZN7dvTxsrPIoiQVo",
+//   authDomain: "myfirstfirebase-230fb.firebaseapp.com",
+//   databaseURL: "https://myfirstfirebase-230fb.firebaseio.com",
+//   projectId: "myfirstfirebase-230fb",
+//   storageBucket: "myfirstfirebase-230fb.appspot.com",
+//   messagingSenderId: "147999552069"
+// }
 
-let app = Firebase.initializeApp(config)
-let db = app.database()
-
-
+// let app = Firebase.initializeApp(config)
+// let db = app.database()
 
 
-  firebase.initializeApp(config);
+
+
+//   firebase.initializeApp(config);
 
 
 

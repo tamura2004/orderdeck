@@ -5,6 +5,13 @@ v-app(light)
     v-toolbar-items
       v-btn(flat @click="clear") リセット
   main
+    v-btn(color="primary",@click="add") add
+    v-btn(color="error",@click="remove") remove
+    v-btn(color="error",@click="shuffle") shuffle
+
+    transition-group(name="flip-list",tag="p")
+      span(v-for="item in items",:key="item",class="list-item") {{item}}
+
     v-container(v-if="deck.length === 0")
       //- h6 {{ JSON.stringify(heroes)}}
       h6 勇者を選択して下さい
@@ -41,6 +48,10 @@ v-app(light)
 <script lang="coffee">
 export default
   data: ->
+    items: [1,2]
+    headNum: 1
+    tailNum: 2
+    nextNum: 10
     count: 0
     heroes: [
       name: '勇者ブルー'
@@ -76,6 +87,17 @@ export default
     deck: []
 
   methods:
+    randomIndex: -> Math.floor(Math.random() * @items.length)
+
+    add: ->
+      @items.push(++@tailNum)
+      @items.shift()
+
+    remove: ->
+      @items.unshift(--@headNum)
+      @items.pop()
+
+    shuffle: -> @items = _.shuffle(@items)
     init: ->
       card = (hero for hero in @heroes when hero.selected)
       num = if card.length >= 4 then 2 else 1
@@ -146,4 +168,17 @@ p
   text-align center
   min-height 300px
 
+.list-item
+  transition all 1s
+  display inline-block
+  margin-right 10px
+
+.flip-list-enter, .flip-list-leave-to
+  opacity 0
+  
+.flip-list-leave-active
+  position absolute
+
+.flip-list-move
+  transition transform 1s
 </style>
