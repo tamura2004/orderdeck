@@ -1,89 +1,100 @@
 <template lang="pug">
-html
-  body
-    v-app(light)
-      v-toolbar(fixed)
-        v-toolbar-title DungeonGO! 順番デッキ
-        v-toolbar-items
-          v-btn(flat,@click="clear") リセット
-      main
-        v-container(v-if="deck.length === 0")
-          h6 勇者を選択して下さい
-          v-form
-            v-switch.py-1(
-              color="primary"
-              v-for="hero in heroes"
-              :label="hero.name"
-              v-model="hero.selected"
-            )
-            v-btn.primary(@click="init") ゲーム開始
+v-app(light)
+  v-toolbar(fixed)
+    v-toolbar-title DungeonGO! 順番デッキ
+    v-toolbar-items
+      v-btn(flat @click="clear") リセット
+  main
+    v-container(v-if="deck.length === 0")
+      //- h6 {{ JSON.stringify(heroes)}}
+      h6 勇者を選択して下さい
+      v-form
+        v-switch.py-1(
+          v-for="hero in heroes"
+          :key="hero.name"
+          color="primary"
+          :label="hero.name"
+          v-model="hero.selected"
+        )
+        v-btn.primary(@click="init") ゲーム開始
 
-        v-container(v-else)
-          carousel(
-            :paginationEnabled="false",
-            :navigationEnabled="true",
-            :navigationClickTargetSize="24"
+    v-container(v-else)
+      v-layout(row wrap)
+        v-flex(xs6)
+          v-card(
+            :style="{backgroundColor: deck[count].bgColor}"
+            @click="dec"
           )
-            slide(v-for="card in deck",:style="{ backgroundColor: card.bgColor }")
-              p {{ card.name }}
+            p {{deck[count].name}}
+
+        v-flex(xs6)
+          v-card(
+            :style="{backgroundColor: deck[count+1].bgColor}"
+            @click="inc"
+          )
+            p {{deck[count+1].name}}
+
+
 
 </template>
 
-<script>
+<script lang="coffee">
+export default
+  data: ->
+    count: 0
+    heroes: [
+      name: '勇者ブルー'
+      bgColor: '#0074bf'
+      selected: true
+    ,
+      name: '勇者レッド'
+      bgColor: '#c93a40'
+      selected: true
+    ,
+      name: '勇者グリーン'
+      bgColor: '#56a764'
+      selected: true
+    ,
+      name: '勇者イエロー'
+      bgColor: '#f2cf01'
+      selected: true
+    ,
+      name: '勇者ホワイト'
+      bgColor: '#fff'
+      selected: true
+    ,
+      name: '勇者ブラック'
+      bgColor: '#222'
+      selected: true
+    ]
+    king:
+      name: '王様'
+      bgColor: '#9460a0'
+    monster:
+      name: 'モンスター'
+      bgColor: '#000'
+    deck: []
 
-// import { Carousel, Slide } from 'vue-carousel'
+  methods:
+    init: ->
+      card = (hero for hero in @heroes when hero.selected)
+      num = if card.length >= 4 then 2 else 1
+      for i in [1..num]
+        card.push(@king)
+        card.push(@monster)
 
-export default {
-  data () {
-    return {
-      heroes: [
-        { name: '勇者ブルー', bgColor: '#0074bf', key: 'blue', selected: true },
-        { name: '勇者レッド', bgColor: '#c93a40', key: 'red', selected: true },
-        { name: '勇者グリーン', bgColor: '#56a764', key: 'green', selected: true },
-        { name: '勇者イエロー', bgColor: '#f2cf01', key: 'yellow', selected: true },
-        { name: '勇者ホワイト', bgColor: '#fff', key: 'white', selected: true },
-        { name: '勇者ブラック', bgColor: '#222', key: 'black', selected: true }
-      ],
-      king: { name: '王様', bgColor: '#9460a0', key: 'king' },
-      monster: { name: 'モンスター', bgColor: '#000', key: 'monster' },
-      deck: []
-    }
-  },
-  methods: {
-    init () {
-      let card = []
-
-      for (let hero of this.heroes) {
-        if (hero.selected) {
-          card.push(hero)
-        }
-      }
-
-      let numOfHeroes = card.length
-
-      card.push(this.king)
-      card.push(this.monster)
-
-      if (numOfHeroes >= 4) {
-        card.push(this.king)
-        card.push(this.monster)
-      }
-
-      let deck = []
-
-      for (var i = 1; i < 40; i++) {
+      deck = []
+      key = 0
+      for i in [1..40]
         deck.push({ name: '第' + i + 'ラウンド', bgColor: '#d16b16' })
-        deck = deck.concat(this._.shuffle(card))
-      }
+        deck = deck.concat(_.shuffle(card))
       deck.push({ name: 'タイムオーバー', bgColor: '#000' })
+      @deck = deck
 
-      this.deck = deck
-    },
-    clear () {
-      this.deck = []
-    }
-  }
-}
+    clear: -> @deck = []
+    inc: -> @count++
+    dec: -> @count-- if @count > 0
+
 </script>
 
 <style lang="stylus">
@@ -92,12 +103,12 @@ export default {
   padding 0 60px
 
 #app
-  font-family "游ゴシック", YuGothic, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", sans-serif
+  font-family "游ゴシック" YuGothic "ヒラギノ角ゴ Pro" "Hiragino Kaku Gothic Pro" "メイリオ" "Meiryo" sans-serif
   -webkit-font-smoothing antialiased
   -moz-osx-font-smoothing grayscale
 
 p
-  font-size 3rem
+  font-size 2rem
   margin-bottom 4px
   font-weight bold
   color white
