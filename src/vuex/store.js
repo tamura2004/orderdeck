@@ -14,43 +14,31 @@ const config = {
 const firebaseApp = firebase.initializeApp(config)
 const db = firebaseApp.database()
 const deckRef = db.ref('deck')
-const rootRef = db.ref('root')
+const countRef = db.ref('count')
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     deck: [],
-    root: {
-      count: 0,
-      round: 0
-    }
+    count: 0,
+    round: 0
   },
   actions: {
-    initDeck: firebaseAction(({ bindFirebaseRef }) => {
-      bindFirebaseRef('deck', deckRef, { wait: true })
-    }),
-    initCount: firebaseAction(({ bindFirebaseRef }) => {
-      bindFirebaseRef('root', rootRef)
-    }),
-    incCount: firebaseAction(({ state, bindFirebaseRef }) => {
-      rootRef.child('count').set(state.root.count + 1)
-    }),
-    decCount: firebaseAction(({ state, bindFirebaseRef }) => {
-      rootRef.child('count').set(state.root.count - 1)
-    }),
-    incRound: firebaseAction(({ state, bindFirebaseRef }) => {
-      rootRef.child('round').set(state.root.round + 1)
-    }),
-    setDeck: firebaseAction(({ bindFirebaseRef }, deck) => {
-      deckRef.set(deck)
-    }),
-    concatDeck: firebaseAction(({ state, bindFirebaseRef }, deck) => {
-      deckRef.set(state.deck.concat(deck))
-    })
+    initCount ({ commit }) {
+      countRef.on("value", function(snapshot) {
+        commit("setCount", snapshot.val())
+      })
+      countRef.set(10)
+    },
+    incCount ({commit, state}) {
+      countRef.set(state.count + 1)
+    }
   },
   mutations: {
-    ...firebaseMutations
+    setCount (state, value) {
+      state.count = value
+    }
   }
 })
 

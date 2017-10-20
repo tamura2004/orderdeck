@@ -1,12 +1,15 @@
 <template lang="pug">
 v-app(light)
   v-toolbar(fixed)
-    v-toolbar-title {{deck.length === 0 ? "DungeonGO!" : "ラウンド" + round}}
+    v-toolbar-title DungeonGO!
     v-toolbar-items
       v-btn(flat @click="clear") リセット
 
   main
-    v-container(v-if="deck.length === 0")
+    v-card(@click="incCount")
+      p {{ count }}
+
+    v-container(v-if="deck && deck.length === 0")
 
       h6 勇者を選択して下さい
       v-form
@@ -46,16 +49,17 @@ export default
     cards: cards
 
   created: ->
-    @$store.dispatch('initDeck')
-    @$store.dispatch('initRound')
     @$store.dispatch('initCount')
 
   computed:
-    mapState(['deck', 'round', 'count'])
+    mapState(['count','deck','round'])
 
   methods:
     init: ->
       @$store.dispatch('setDeck', @newDeck())
+
+    incCount: ->
+      @$store.dispatch('incCount')
 
     newDeck: ->
       @$store.dispatch('incRound')
