@@ -45,6 +45,11 @@ export default
   data: ->
     cards: cards
 
+  created: ->
+    @$store.dispatch('initDeck')
+    @$store.dispatch('initRound')
+    @$store.dispatch('initCount')
+
   computed:
     mapState(['deck', 'round', 'count'])
 
@@ -53,15 +58,16 @@ export default
       @$store.dispatch('setDeck', @newDeck())
 
     newDeck: ->
-      @$store.commit('incRound')
+      @$store.dispatch('incRound')
       deck = (card for card in @cards when card.selected)
       deck = _.shuffle(deck)
       deck.unshift(@roundCard())
       deck
 
     clear: ->
-      @$store.commit('initDeck')
-      @$store.commit('initRound')
+      @$store.dispatch('initDeck')
+      @$store.dispatch('initRound')
+      @$store.dispatch('initCount')
 
     roundCard: ->
       name: "第#{@round}ラウンド"
@@ -70,15 +76,15 @@ export default
     handleClick: (i) ->
       if i is @count
         if @count > 0
-          @$store.commit('dec')
+          @$store.dispatch('decCount')
         else
           alert("これより前のカードはありません")
       else
         if i is @deck.length - 1
           @$store.dispatch('concatDeck', @newDeck())
-          @$store.commit('inc')
+          @$store.dispatch('incCount')
         else
-          @$store.commit('inc')
+          @$store.dispatch('incCount')
 
 </script>
 
