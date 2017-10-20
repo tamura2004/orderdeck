@@ -1,7 +1,7 @@
 <template lang="pug">
 v-app(light)
   v-toolbar(fixed)
-    v-toolbar-title {{deck.length === 0 ? "DungeonGO!" : "ラウンド" + count}}
+    v-toolbar-title {{deck.length === 0 ? "DungeonGO!" : "ラウンド" + round}}
     v-toolbar-items
       v-btn(flat @click="clear") リセット
 
@@ -11,11 +11,11 @@ v-app(light)
       h6 勇者を選択して下さい
       v-form
         v-switch.py-1(
-          v-for="hero in heroes"
-          :key="hero.name"
+          v-for="card in cards"
+          :key="card.name"
           color="primary"
-          :label="hero.name"
-          v-model="hero.selected"
+          :label="card.name"
+          v-model="card.selected"
         )
         v-btn.primary(@click="init") ゲーム開始
 
@@ -29,54 +29,56 @@ v-app(light)
         )
           v-card.darken-4(
             :class="card.color"
-            @click="inc(i)"
+            @click="handleClick(i)"
           )
             p.text-xs-center.py-5 {{card.name}}
 
 </template>
 
 <script lang="coffee">
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
+import cards from 'components/cards.coffee'
+
+card.selected = false for card in cards
 
 export default
   data: ->
-    king:
-      name: '王様'
-      color: 'purple'
-    monster:
-      name: 'モンスター'
-      color: 'black'
-    deck: []
+    cards: cards
 
   computed:
-    mapGetters(['heroes', 'count'])
+    mapState(['deck', 'round', 'count'])
 
   methods:
     init: ->
-      card = (hero for hero in @heroes when hero.selected)
-      num = if card.length >= 4 then 2 else 1
-      for i in [1..num]
-        card.push(@king)
-        card.push(@monster)
+      @$store.dispatch('setDeck', @newDeck())
 
-      deck = []
-      key = 0
-      for i in [1..40]
-        deck.push({ name: '第' + i + 'ラウンド', color: 'orange' })
-        deck = deck.concat(_.shuffle(card))
-      deck.push({ name: 'タイムオーバー', bgColor: '#000' })
-      @deck = deck
+    newDeck: ->
+      @$store.commit('incRound')
+      deck = (card for card in @cards when card.selected)
+      deck = _.shuffle(deck)
+      deck.unshift(@roundCard())
+      deck
 
-    clear: -> @deck = []
+    clear: ->
+      @$store.commit('initDeck')
+      @$store.commit('initRound')
 
-    inc: (i) ->
+    roundCard: ->
+      name: "第#{@round}ラウンド"
+      color: 'orange'
+
+    handleClick: (i) ->
       if i is @count
         if @count > 0
-          @$store.commit('inc')
+          @$store.commit('dec')
         else
           alert("これより前のカードはありません")
       else
-        @$store.commit('dec')
+        if i is @deck.length - 1
+          @$store.dispatch('concatDeck', @newDeck())
+          @$store.commit('inc')
+        else
+          @$store.commit('inc')
 
 </script>
 
