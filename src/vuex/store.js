@@ -15,8 +15,11 @@ const firebaseApp = firebase.initializeApp(config)
 const db = firebaseApp.database()
 const deckRef = db.ref('deck')
 const countRef = db.ref('count')
+const roundRef = db.ref('round')
 
 Vue.use(Vuex)
+
+const myPlugin = store => store.dispatch('initAll')
 
 export default new Vuex.Store({
   state: {
@@ -25,20 +28,49 @@ export default new Vuex.Store({
     round: 0
   },
   actions: {
+    // initialize block
+    initAll ({ dispatch }) {
+      dispatch("initCount")
+      dispatch("initRound")
+      dispatch("initDeck")
+    },
     initCount ({ commit }) {
       countRef.on("value", function(snapshot) {
         commit("setCount", snapshot.val())
       })
-      countRef.set(10)
     },
-    incCount ({commit, state}) {
-      countRef.set(state.count + 1)
+    initRound ({ commit }) {
+      roundRef.on("value", function(snapshot) {
+        commit("setRound", snapshot.val())
+      })
+    },
+    initDeck ({ commit }) {
+      deckRef.on("value", function(snapshot) {
+        commit("setDeck", snapshot.val())
+      })
+    },
+    
+    setCount (context, payload) {
+      countRef.set(payload)
+    },
+    setRound (context, payload) {
+      roundRef.set(payload)
+    },
+    setDeck (context, payload) {
+      deckRef.set(payload)
     }
   },
   mutations: {
     setCount (state, value) {
       state.count = value
+    },
+    setRound (state, value) {
+      state.round = value
+    },
+    setDeck (state, value) {
+      state.deck = value
     }
-  }
+  },
+  plugins: [myPlugin]
 })
 

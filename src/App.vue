@@ -1,26 +1,27 @@
 <template lang="pug">
 v-app(light)
-  v-toolbar(fixed)
+  v-toolbar(fixed absolute=true)
     v-toolbar-title DungeonGO!
+      v-btn(flat v-if="round > 0") Round {{round}}
     v-toolbar-items
       v-btn(flat @click="clear") リセット
 
   main
-    v-card(@click="incCount")
-      p {{ count }}
+    v-container(v-if="deck === null || deck.length === 0")
 
-    v-container(v-if="deck && deck.length === 0")
-
-      h6 勇者を選択して下さい
+      h4 カードを選択して下さい
       v-form
-        v-switch.py-1(
-          v-for="card in cards"
-          :key="card.name"
-          color="primary"
-          :label="card.name"
-          v-model="card.selected"
-        )
-        v-btn.primary(@click="init") ゲーム開始
+        v-layout(row wrap)
+          v-flex(xs6 v-for="col in [0,-1]")
+            v-switch.py-0(
+              v-for="card in cards"
+              v-if="card.name.indexOf('勇者') === col"
+              :key="card.name"
+              color="primary"
+              :label="card.name"
+              v-model="card.selected"
+            )
+        v-btn.primary(@click="makeDeck") ゲーム開始
 
     v-container(v-else,fluid)
       transition-group(tag="v-layout",name="flip-list",row,wrap,appear)
@@ -30,7 +31,7 @@ v-app(light)
           v-if="count <= i && i <= count + 1"
           :key="i"
         )
-          v-card.darken-4(
+          v-card.darken-1(
             :class="card.color"
             @click="handleClick(i)"
           )
@@ -42,53 +43,54 @@ v-app(light)
 import { mapState } from 'vuex'
 import cards from 'components/cards.coffee'
 
-card.selected = false for card in cards
+card.selected = true for card in cards
 
 export default
   data: ->
     cards: cards
 
-  created: ->
-    @$store.dispatch('initCount')
-
   computed:
     mapState(['count','deck','round'])
 
   methods:
-    init: ->
+    makeDeck: ->
       @$store.dispatch('setDeck', @newDeck())
-
-    incCount: ->
-      @$store.dispatch('incCount')
+      @$store.dispatch('setCount', 0)
+      @$store.dispatch('setRound', @round + 1)
 
     newDeck: ->
-      @$store.dispatch('incRound')
       deck = (card for card in @cards when card.selected)
       deck = _.shuffle(deck)
-      deck.unshift(@roundCard())
+      deck.unshift
+        name: "開始"
+        color: 'indigo'
+      deck.unshift
+        name: "第#{@round + 1}ラウンド"
+        color: 'indigo'
+      deck.push
+        name: "第#{@round + 1}ラウンド"
+        color: 'indigo'
+      deck.push
+        name: "終了"
+        color: 'indigo'
       deck
 
     clear: ->
-      @$store.dispatch('initDeck')
-      @$store.dispatch('initRound')
-      @$store.dispatch('initCount')
-
-    roundCard: ->
-      name: "第#{@round}ラウンド"
-      color: 'orange'
+      @$store.dispatch("setCount", 0)
+      @$store.dispatch("setRound", 0)
+      @$store.dispatch("setDeck", null)
 
     handleClick: (i) ->
       if i is @count
         if @count > 0
-          @$store.dispatch('decCount')
+          @$store.dispatch('setCount', @count - 1)
         else
           alert("これより前のカードはありません")
       else
         if i is @deck.length - 1
-          @$store.dispatch('concatDeck', @newDeck())
-          @$store.dispatch('incCount')
+          @makeDeck()
         else
-          @$store.dispatch('incCount')
+          @$store.dispatch('setCount', @count + 1)
 
 </script>
 
@@ -103,6 +105,7 @@ export default
   -moz-osx-font-smoothing grayscale
 
 p
+  user-select none
   font-size 2rem
   margin-bottom 4px
   font-weight bold
